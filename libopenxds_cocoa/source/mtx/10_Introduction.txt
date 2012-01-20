@@ -1,0 +1,14 @@
+.	Introduction
+
+
+
+
+..		Dependencies
+
+~!dep/OpenXDS_Core.link~
+$BUILD_PATH/OpenXDS_Core/0.x
+~
+
+~!dep/OpenXDS.link~
+$BUILD_PATH/OpenXDS/0.x
+~

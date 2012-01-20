@@ -1,0 +1,66 @@
+.	Model
+
+~!include/openxds.cocoa/Model.h~
+#ifndef OPENXDS_COCOA_MODEL_H
+#define OPENXDS_COCOA_MODEL_H
+
+#import <Cocoa/Cocoa.h>
+
+#include "openxds.cocoa.h"
+#include <openxds/Object.h>
+
+namespace openxds {
+	namespace cocoa {
+
+class Model
+{
+private:
+	NSMutableArray* views;
+
+public:
+	         Model();
+	virtual ~Model();
+	
+	virtual void registerView( XDSView* aView ) const;
+	virtual void notifyViews() const;
+};
+
+};};
+
+#endif
+~
+
+
+~source/objective-c++/Model.mm~
+#include "openxds.cocoa/Model.h"
+#include "openxds.cocoa/XDSView.h"
+
+using namespace openxds::cocoa;
+
+Model::Model()
+{
+	this->views = [[[NSMutableArray alloc] init] retain];
+}
+
+Model::~Model()
+{
+	[this->views release];
+}
+
+void
+Model::registerView( XDSView* aView ) const
+{
+	[this->views addObject: aView];
+}
+
+void
+Model::notifyViews() const
+{
+	long max = [views count];
+	for ( long i=0; i < max; i++ )
+	{
+		XDSView* view = (XDSView*) [views objectAtIndex:i];
+		[view refresh];
+	}
+}
+~
