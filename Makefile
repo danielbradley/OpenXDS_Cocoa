@@ -4,7 +4,7 @@ clean:
 	cd libopenxds_cocoa; make clean
 
 quasi:
-	cd liboepnxds_cocoa; make quasi
+	cd libopenxds_cocoa; make quasi
 
 build:
-	cd liboepnxds_cocoa; make build
+	cd libopenxds_cocoa; make build

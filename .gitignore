@@ -1,0 +1,8 @@
+bin
+dep
+lib
+obj
+documentation
+include
+source/include
+source/objective-c++
