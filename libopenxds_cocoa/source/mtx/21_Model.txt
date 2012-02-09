@@ -48,9 +48,9 @@ Model::~Model()
 }
 
 void
-Model::registerView( XDSView* aView ) const
+Model::registerView( NSObject<XDSView>& aView ) const
 {
-	[this->views addObject: aView];
+	[this->views addObject:&aView];
 }
 
 void

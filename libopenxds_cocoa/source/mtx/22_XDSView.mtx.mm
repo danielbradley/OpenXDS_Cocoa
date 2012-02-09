@@ -7,7 +7,7 @@
 #import <Cocoa/Cocoa.h>
 #import "openxds.cocoa.h"
 
-@protocol XDSView <NSObject>
+@protocol XDSView<NSObject>
 
 - (void) refresh;
 

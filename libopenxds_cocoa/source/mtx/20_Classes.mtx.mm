@@ -4,17 +4,13 @@
 #ifndef OPENXDS_COCOA_H
 #define OPENXDS_COCOA_H
 
+@class XDSModel;
 @class XDSSplitViewDelegate;
 @class XDSTreeNode;
 @class XDSTree;
 @class XDSView;
 
-namespace openxds {
-	namespace cocoa {
-	
-class Model;
-
-};};
+@protocol XDSView;
 
 #endif
 ~

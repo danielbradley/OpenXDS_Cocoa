@@ -12,7 +12,7 @@ clean:
 	rm -rf source/objective-c++
 
 quasi:
-	quasi -f . source/mtx/*.txt
+	quasi -f . source/mtx/*mtx*
 
 build:
 	CFLAGS="" LDFLAGS="-framework Cocoa" build --force
