@@ -4,7 +4,9 @@
 #ifndef OPENXDS_COCOA_H
 #define OPENXDS_COCOA_H
 
+@class XDSEmptyView;
 @class XDSModel;
+@class XDSSplitView;
 @class XDSSplitViewDelegate;
 @class XDSTreeNode;
 @class XDSTree;
