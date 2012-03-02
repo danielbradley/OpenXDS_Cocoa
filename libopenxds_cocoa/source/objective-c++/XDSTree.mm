@@ -44,9 +44,9 @@
 	return self->value;
 }
 
-- (id) child: (NSInteger) index
+- (XDSTreeNode&) child: (NSInteger)index
 {
-	return [self->children objectAtIndex: index];
+	return (XDSTreeNode&) *[self->children objectAtIndex: index];
 }
 
 - (BOOL) isExpandable
@@ -83,51 +83,47 @@
 	[aNode setValue: aValue];
 }
 
-- (XDSTreeNode*) addTo:(XDSTreeNode*) aNode newNode:(NSString*) aValue
+- (XDSTreeNode&)addRootValue:(NSString*)aValue;
 {
-	if ( nil == aNode )
+	if ( self->root )
 	{
-		#ifdef DEBUG_OPENXDS_COCOA
-		NSLog( @"Replacing root" );
-		#endif
-		
-		if ( self->root )
-		{
-			[self->root release];
-			self->root = nil;
-		}
-		self->root = [XDSTreeNode newWithValue: aValue];
-		return self->root;
+		[self->root release];
+		self->root = nil;
 	}
-	else
-	{
-		return [aNode addChild: aValue];
-	}
+	self->root = [XDSTreeNode newWithValue:aValue];
+	return *self->root;
 }
 
-- (XDSTreeNode&) findOrAddTo:(XDSTreeNode*)aNode nodeValue:(NSString*) aValue
+- (XDSTreeNode&) addTo:(XDSTreeNode&)aNode newNode:(NSString*) aValue
 {
-	long nr_children = [aNode nrChildren];
+	return *[&aNode addChild:aValue];
+}
+
+- (XDSTreeNode&) findOrAddTo:(XDSTreeNode&)aNode nodeValue:(NSString*) aValue
+{
+	long nr_children = [&aNode nrChildren];
 	for ( long i=0; i < nr_children; i++ )
 	{
-		if ( [[[aNode child:i]value]isEqualTo:aValue] )
+		XDSTreeNode* child = &[&aNode child:i];
+	
+		if ( [[child value] isEqualTo: aValue] )
 		{
-			return *[aNode child:i];
+			return [&aNode child:i];
 		}
 	}
-	return *[self addTo:aNode newNode:aValue];
+	return [self addTo:aNode newNode:aValue];
 }
 
-- (id) root
+- (XDSTreeNode&) root
 {
-	return self->root;
+	return *self->root;
 }
 
 //	Implementation of NSOutlineView
 
 - (id) outlineView:(NSOutlineView*) outlineView child:(NSInteger) index ofItem: (id) item
 {
-	return (nil == item) ? self->root : [item child: index];
+	return (nil == item) ? self->root : &[item child: index];
 }
 
 - (BOOL) outlineView:(NSOutlineView*) outlineView isItemExpandable:(id) item
