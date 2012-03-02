@@ -105,6 +105,19 @@
 	}
 }
 
+- (XDSTreeNode&) findOrAddTo:(XDSTreeNode*)aNode nodeValue:(NSString*) aValue
+{
+	long nr_children = [aNode nrChildren];
+	for ( long i=0; i < nr_children; i++ )
+	{
+		if ( [[[aNode child:i]value]isEqualTo:aValue] )
+		{
+			return *[aNode child:i];
+		}
+	}
+	return *[self addTo:aNode newNode:aValue];
+}
+
 - (id) root
 {
 	return self->root;
