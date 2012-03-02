@@ -23,16 +23,17 @@ This class implements a basic Tree datastructure for use with the NSOutlineView
 
 @interface XDSTree : NSObject <NSOutlineViewDataSource>
 
-- (id)                  init;
-- (void)                node:(XDSTreeNode*)    aNode                       setValue:(NSString*)       aValue;
-- (XDSTreeNode*)       addTo:(XDSTreeNode*)    aNode                        newNode:(NSString*)       aValue;
+- (id)                    init;
+- (void)                  node:(XDSTreeNode*)    aNode                       setValue:(NSString*)       aValue;
+- (XDSTreeNode*)         addTo:(XDSTreeNode*)    aNode                        newNode:(NSString*)       aValue;
+- (XDSTreeNode&)   findOrAddTo:(XDSTreeNode*)    aNode                      nodeValue:(NSString*)       aValue;
 
-- (id)                  root;
+- (id)                    root;
 
-- (id)           outlineView:(NSOutlineView*) outlineView                     child:(NSInteger)       index       ofItem: (id) item;
-- (BOOL)         outlineView:(NSOutlineView*) outlineView          isItemExpandable:(id)              item;
-- (NSInteger)    outlineView:(NSOutlineView*) outlineView    numberOfChildrenOfItem:(id)              item;
-- (id)           outlineView:(NSOutlineView*) outlineView objectValueForTableColumn:(NSTableColumn *) tableColumn byItem: (id) item;
+- (id)             outlineView:(NSOutlineView*) outlineView                     child:(NSInteger)       index       ofItem: (id) item;
+- (BOOL)           outlineView:(NSOutlineView*) outlineView          isItemExpandable:(id)              item;
+- (NSInteger)      outlineView:(NSOutlineView*) outlineView    numberOfChildrenOfItem:(id)              item;
+- (id)             outlineView:(NSOutlineView*) outlineView objectValueForTableColumn:(NSTableColumn *) tableColumn byItem: (id) item;
 
 @end
 ~
@@ -149,6 +150,19 @@ This class implements a basic Tree datastructure for use with the NSOutlineView
 	{
 		return [aNode addChild: aValue];
 	}
+}
+
+- (XDSTreeNode&) findOrAddTo:(XDSTreeNode*)aNode nodeValue:(NSString*) aValue
+{
+	long nr_children = [aNode nrChildren];
+	for ( long i=0; i < nr_children; i++ )
+	{
+		if ( [[[aNode child:i]value]isEqualTo:aValue] )
+		{
+			return *[aNode child:i];
+		}
+	}
+	return *[self addTo:aNode newNode:aValue];
 }
 
 - (id) root
