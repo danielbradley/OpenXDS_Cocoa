@@ -15,7 +15,7 @@ quasi:
 	quasi -f . source/mtx/*mtx*
 
 build:
-	CFLAGS="" LDFLAGS="-framework Cocoa" build --force
+	CFLAGS="" LDFLAGS="-framework Cocoa -framework WebKit" build --force
 
 maxtext:
 #	mkdir -p documentation/html/images
