@@ -7,7 +7,7 @@
 	NSString*       value;
 }
 
-+ (id) newWithValue: (NSString*) aValue
++ (id) newWithValue: (id) aValue
 {
 	 self = [[XDSTreeNode alloc] init];
 	[self setValue: aValue];
@@ -25,21 +25,20 @@
 	return self;
 }
 
-- (void) setValue: (NSString*) aValue
+- (void) setValue: (id) aValue
 {
 	[self->value release];
 	 self->value = [aValue retain];
 }
 
-- (XDSTreeNode*) addChild: (NSString*) aValue
+- (XDSTreeNode&) addChild: (NSString*) aValue
 {
 	XDSTreeNode* node = [XDSTreeNode newWithValue: aValue];
 	[self->children addObject: node];
-	return node;
+	return *node;
 }
 
-
-- (NSString*) value
+- (id) value
 {
 	return self->value;
 }
@@ -83,7 +82,7 @@
 	[aNode setValue: aValue];
 }
 
-- (XDSTreeNode&)addRootValue:(NSString*)aValue;
+- (XDSTreeNode&)addRootValue:(id)aValue;
 {
 	if ( self->root )
 	{
@@ -94,12 +93,12 @@
 	return *self->root;
 }
 
-- (XDSTreeNode&) addTo:(XDSTreeNode&)aNode newNode:(NSString*) aValue
+- (XDSTreeNode&) addTo:(XDSTreeNode&)aNode newNode:(id) aValue
 {
-	return *[&aNode addChild:aValue];
+	return [&aNode addChild:aValue];
 }
 
-- (XDSTreeNode&) findOrAddTo:(XDSTreeNode&)aNode nodeValue:(NSString*) aValue
+- (XDSTreeNode&) findOrAddTo:(XDSTreeNode&)aNode nodeValue:(id) aValue
 {
 	long nr_children = [&aNode nrChildren];
 	for ( long i=0; i < nr_children; i++ )

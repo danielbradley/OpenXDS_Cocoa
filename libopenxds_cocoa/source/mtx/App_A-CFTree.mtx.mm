@@ -9,12 +9,12 @@ This class implements a basic Tree datastructure for use with the NSOutlineView
 
 @interface XDSTreeNode : NSObject
 
-+ (id)          newWithValue:(NSString*) aValue;
++ (id)          newWithValue:(id) aValue;
 - (id)                  init;
-- (void)            setValue:(NSString*) aValue;
-- (XDSTreeNode*)    addChild:(NSString*) aValue;
+- (void)            setValue:(id) aValue;
+- (XDSTreeNode&)    addChild:(NSString*) aValue;
 
-- (NSString*)          value;
+- (id)                 value;
 - (XDSTreeNode&)       child:(NSInteger) index;
 - (BOOL)        isExpandable;
 - (NSInteger)     nrChildren;
@@ -25,9 +25,9 @@ This class implements a basic Tree datastructure for use with the NSOutlineView
 
 - (id)                    init;
 - (void)                  node:(XDSTreeNode*)    aNode                       setValue:(NSString*)       aValue;
-- (XDSTreeNode&)  addRootValue:(NSString*)       aValue;
-- (XDSTreeNode&)         addTo:(XDSTreeNode&)    aNode                        newNode:(NSString*)       aValue;
-- (XDSTreeNode&)   findOrAddTo:(XDSTreeNode&)    aNode                      nodeValue:(NSString*)       aValue;
+- (XDSTreeNode&)  addRootValue:(id)aValue;
+- (XDSTreeNode&)         addTo:(XDSTreeNode&)    aNode                        newNode:(id)aValue;
+- (XDSTreeNode&)   findOrAddTo:(XDSTreeNode&)    aNode                      nodeValue:(id)aValue;
 
 - (XDSTreeNode&)          root;
 
@@ -51,7 +51,7 @@ This class implements a basic Tree datastructure for use with the NSOutlineView
 	NSString*       value;
 }
 
-+ (id) newWithValue: (NSString*) aValue
++ (id) newWithValue: (id) aValue
 {
 	 self = [[XDSTreeNode alloc] init];
 	[self setValue: aValue];
@@ -69,21 +69,20 @@ This class implements a basic Tree datastructure for use with the NSOutlineView
 	return self;
 }
 
-- (void) setValue: (NSString*) aValue
+- (void) setValue: (id) aValue
 {
 	[self->value release];
 	 self->value = [aValue retain];
 }
 
-- (XDSTreeNode*) addChild: (NSString*) aValue
+- (XDSTreeNode&) addChild: (NSString*) aValue
 {
 	XDSTreeNode* node = [XDSTreeNode newWithValue: aValue];
 	[self->children addObject: node];
-	return node;
+	return *node;
 }
 
-
-- (NSString*) value
+- (id) value
 {
 	return self->value;
 }
@@ -131,7 +130,7 @@ This class implements a basic Tree datastructure for use with the NSOutlineView
 	[aNode setValue: aValue];
 }
 
-- (XDSTreeNode&)addRootValue:(NSString*)aValue;
+- (XDSTreeNode&)addRootValue:(id)aValue;
 {
 	if ( self->root )
 	{
@@ -142,12 +141,12 @@ This class implements a basic Tree datastructure for use with the NSOutlineView
 	return *self->root;
 }
 
-- (XDSTreeNode&) addTo:(XDSTreeNode&)aNode newNode:(NSString*) aValue
+- (XDSTreeNode&) addTo:(XDSTreeNode&)aNode newNode:(id) aValue
 {
-	return *[&aNode addChild:aValue];
+	return [&aNode addChild:aValue];
 }
 
-- (XDSTreeNode&) findOrAddTo:(XDSTreeNode&)aNode nodeValue:(NSString*) aValue
+- (XDSTreeNode&) findOrAddTo:(XDSTreeNode&)aNode nodeValue:(id) aValue
 {
 	long nr_children = [&aNode nrChildren];
 	for ( long i=0; i < nr_children; i++ )
