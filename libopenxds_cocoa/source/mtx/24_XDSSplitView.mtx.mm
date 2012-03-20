@@ -281,14 +281,14 @@ XDSView protocol methods
 		preferred.height = ((count-1) * [self dividerThickness]) + 20.0;
 	}
 	  
-	for ( NSInteger i=0; i < count; i++ )
+	if ( [self isVertical] )
 	{
-		float  user_size = [[self->userSizes objectAtIndex:i]floatValue];
-		id     subview   = [[self subviews]objectAtIndex:i];
-		NSSize preferred_subview;
-
-		if ( [self isVertical] )
+		for ( NSInteger i=0; i < count; i++ )
 		{
+			float  user_size = [[self->userSizes objectAtIndex:i]floatValue];
+			id     subview   = [[self subviews]objectAtIndex:i];
+			NSSize preferred_subview;
+
 			preferred_subview  = [subview preferredSize:NSMakeSize(0.0,suggested.height)];
 			preferred.height   = fmax( preferred.height, preferred_subview.height );
 
@@ -299,8 +299,15 @@ XDSView protocol methods
 				preferred.width += preferred_subview.width;
 			}
 		}
-		else
+	}
+	else
+	{
+		for ( NSInteger i=0; i < count; i++ )
 		{
+			float  user_size = [[self->userSizes objectAtIndex:i]floatValue];
+			id     subview   = [[self subviews]objectAtIndex:i];
+			NSSize preferred_subview;
+
 			preferred_subview  = [subview preferredSize:NSMakeSize(suggested.width,0.0)];
 			preferred.width    = fmax( preferred.width, preferred_subview.width );
 
