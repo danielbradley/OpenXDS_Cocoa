@@ -4,6 +4,7 @@
 #ifndef OPENXDS_COCOA_H
 #define OPENXDS_COCOA_H
 
+@class XDSContainer;
 @class XDSEmptyView;
 @class XDSModel;
 @class XDSSplitView;
