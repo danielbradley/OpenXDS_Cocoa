@@ -13,6 +13,7 @@
 
 - (id)                     initWithFrame:(NSRect)frame;
 - (void) changeUserSizeDueToMovedDivider:(NSInteger)index;
+- (void)                  resetUserSizes;
 - (void)                          resize;
 
 //	NSView
@@ -69,6 +70,17 @@
 		[self            setDelegate:self];
 	}
 	return self;
+}
+~
+
+
+
+
+~source/objective-c++/XDSSplitView.mm~
+- (void) resetUserSizes
+{
+	[self->userSizes release];
+	self->userSizes = [[NSMutableArray alloc]init];
 }
 ~
 
@@ -158,60 +170,99 @@ NSView
 	NSLog( @"XDSSplitView::resizeSubviewsWithOldSize" );
 	#endif
 
-	bool is_vertical = [self isVertical];
+	id subviews = [self subviews];
+	long last   = [subviews count] - 1;
 
-	NSSize size = [self bounds].size;
+	NSRect frame     = [self frame];
+	NSRect bounds    = [self bounds];
+	NSSize suggested = frame.size;
+	NSSize none      = NSMakeSize(0,0);
 	
-	float x = 0.0;
-	float y = 0.0;
-	float w = size.width;
-	float h = size.height;
-	
-	NSArray* subviews = [self subviews];
-	NSInteger len = [subviews count];
-	for ( NSInteger i=0; i < len; i++ )
+	float x = 0;
+	float y = 0;
+	float w = frame.size.width;
+	float h = frame.size.height;
+	float d = [self dividerThickness];
+
+	if ( [self isVertical] )
 	{
-		float user_size = [[self->userSizes objectAtIndex:i]floatValue];
-		id view  = [subviews objectAtIndex:i];
-
-		if ( user_size )
+		for ( long i=0; i < last; i++ )
 		{
-			if ( is_vertical )
-			{
-				[view setFrame:NSMakeRect( x, y, user_size, h )];
-				x += (user_size + [self dividerThickness]);
+			id subview = [subviews objectAtIndex:i];
+			
+			float user_size = [[self->userSizes objectAtIndex:i]floatValue];
+			float width     = user_size ? user_size : [subview preferredSize:none].width;
 
-				size.width -= user_size;
-			}
-			else
-			{
-				[view setFrame:NSMakeRect( x, y, w, user_size )];
-				y += (user_size + [self dividerThickness]);
-
-				size.height -= user_size;
-			}
+			[subview setFrame:NSMakeRect( x, y, width, h )];
+			
+			suggested.width -= (width + d);
+			              x += (width + d);
 		}
-		else
-		{
-			NSSize pref;
-			if ( is_vertical )
-			{
-				pref = [view preferredSize:NSMakeSize(0.0,h)];
-				[view setFrame:NSMakeRect( x, y, pref.width, h )];
-				x += (pref.width + [self dividerThickness]);
-
-				size.width -= pref.width;
-			}
-			else
-			{
-				pref = [view preferredSize:NSMakeSize(w,0.0)];
-				[view setFrame:NSMakeRect( x, y, w, pref.height )];
-				y += (pref.height + [self dividerThickness]);
-
-				size.height -= pref.height;
-			}
-		}
+		id subview = [subviews objectAtIndex:last];
+		[subview setFrame:NSMakeRect( x, y, suggested.width, h )];
 	}
+	else
+	{
+		for ( long i=0; i < last; i++ )
+		{
+			id subview = [subviews objectAtIndex:i];
+			
+			float user_size = [[self->userSizes objectAtIndex:i]floatValue];
+			float height    = user_size ? user_size : [subview preferredSize:none].height;
+
+			[subview setFrame:NSMakeRect( x, y, w, height )];
+			
+			suggested.height -= (height + d);
+			               y += (height + d);
+		}
+		id subview = [subviews objectAtIndex:last];
+		[subview setFrame:NSMakeRect( x, y, w, suggested.height )];
+	}
+	
+//	NSInteger len = [subviews count];
+//	for ( NSInteger i=0; i < len; i++ )
+//	{
+//		float user_size = [[self->userSizes objectAtIndex:i]floatValue];
+//		id view  = [subviews objectAtIndex:i];
+//
+//		if ( user_size )
+//		{
+//			if ( is_vertical )
+//			{
+//				[view setFrame:NSMakeRect( x, y, user_size, h )];
+//				x += (user_size + [self dividerThickness]);
+//
+//				size.width -= user_size;
+//			}
+//			else
+//			{
+//				[view setFrame:NSMakeRect( x, y, w, user_size )];
+//				y += (user_size + [self dividerThickness]);
+//
+//				size.height -= user_size;
+//			}
+//		}
+//		else
+//		{
+//			NSSize pref;
+//			if ( is_vertical )
+//			{
+//				pref = [view preferredSize:NSMakeSize(0.0,h)];
+//				[view setFrame:NSMakeRect( x, y, pref.width, h )];
+//				x += (pref.width + [self dividerThickness]);
+//
+//				size.width -= pref.width;
+//			}
+//			else
+//			{
+//				pref = [view preferredSize:NSMakeSize(w,0.0)];
+//				[view setFrame:NSMakeRect( x, y, w, pref.height )];
+//				y += (pref.height + [self dividerThickness]);
+//
+//				size.height -= pref.height;
+//			}
+//		}
+//	}
 
 //	Does not fix the bounds problem.
 //	And causes a new problem with expanding width.
@@ -267,56 +318,72 @@ XDSView protocol methods
 ~source/objective-c++/XDSSplitView.mm~
 - (NSSize) preferredSize:(NSSize)suggested
 {
-	NSInteger count     = [[self subviews]count];
-	NSSize    preferred = NSMakeSize(0.0,0.0);
-	
+	NSSize    none      = NSMakeSize(0,0);
+	NSSize    preferred = none;
+	NSInteger last      = [[self subviews]count] - 1;
+	float     dividers  = [self dividerThickness]*last;
+
 	if ( [self isVertical] )
 	{
-		preferred.width  = ((count-1) * [self dividerThickness]) + 20.0;
-		preferred.height = suggested.height;
+		preferred.width  = dividers;
+		suggested.width -= dividers;
 	}
 	else
 	{
-		preferred.width  = suggested.width;
-		preferred.height = ((count-1) * [self dividerThickness]) + 20.0;
+		preferred.height  = dividers;
+		suggested.height -= dividers;
 	}
 	  
 	if ( [self isVertical] )
 	{
-		for ( NSInteger i=0; i < count; i++ )
+		for ( NSInteger i=0; i < last; i++ )
 		{
-			float  user_size = [[self->userSizes objectAtIndex:i]floatValue];
-			id     subview   = [[self subviews]objectAtIndex:i];
-			NSSize preferred_subview;
+			float  user_size     = [[self->userSizes objectAtIndex:i]floatValue];
+			BOOL   has_user_size = (0.0 != user_size);
+			id     subview       = [[self subviews]objectAtIndex:i];
 
-			preferred_subview  = [subview preferredSize:NSMakeSize(0.0,suggested.height)];
-			preferred.height   = fmax( preferred.height, preferred_subview.height );
+			NSSize preferred_subview = [subview preferredSize:none];
 
-			if ( user_size )
-			{
-				preferred.width += user_size;
-			} else {
-				preferred.width += preferred_subview.width;
-			}
+			float width = has_user_size ? user_size : preferred_subview.width;
+
+			preferred.width  += width;
+			suggested.width  -= width;
+			preferred.height  = fmax( preferred.height, preferred_subview.height );
+		}
+		
+		if ( 0 <= last )
+		{
+			id     subview           = [[self subviews]objectAtIndex:last];
+			NSSize preferred_subview = [subview preferredSize:suggested];
+
+			preferred.width  += preferred_subview.width;
+			preferred.height  = fmax( preferred.height, preferred_subview.height );
 		}
 	}
 	else
 	{
-		for ( NSInteger i=0; i < count; i++ )
+		for ( NSInteger i=0; i < last; i++ )
 		{
-			float  user_size = [[self->userSizes objectAtIndex:i]floatValue];
-			id     subview   = [[self subviews]objectAtIndex:i];
-			NSSize preferred_subview;
+			float  user_size     = [[self->userSizes objectAtIndex:i]floatValue];
+			BOOL   has_user_size = (0.0 != user_size);
+			id     subview       = [[self subviews]objectAtIndex:i];
 
-			preferred_subview  = [subview preferredSize:NSMakeSize(suggested.width,0.0)];
-			preferred.width    = fmax( preferred.width, preferred_subview.width );
+			NSSize preferred_subview = [subview preferredSize:none];
 
-			if ( user_size )
-			{
-				preferred.height += user_size;
-			} else {
-				preferred.height += preferred_subview.height;
-			}
+			float height = has_user_size ? user_size : preferred_subview.height;
+
+			preferred.width   = fmax( preferred.width, preferred_subview.width );
+			preferred.height += height;
+			suggested.height -= height;
+		}
+
+		if ( 0 <= last )
+		{
+			id     subview           = [[self subviews]objectAtIndex:last];
+			NSSize preferred_subview = [subview preferredSize:suggested];
+
+			preferred.width   = fmax( preferred.width, preferred_subview.width );
+			preferred.height += preferred_subview.height;
 		}
 	}
 
