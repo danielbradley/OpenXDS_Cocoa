@@ -10,6 +10,7 @@
 @protocol XDSView<NSObject>
 
 - (void) refresh;
+- (NSSize) preferredSize:(NSSize)suggested;
 
 @end
 
