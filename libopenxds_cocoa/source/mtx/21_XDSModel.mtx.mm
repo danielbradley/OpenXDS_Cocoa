@@ -10,9 +10,10 @@
 
 @interface XDSModel : NSObject
 
-- (id)           init;
-- (void) registerView:(NSObject<XDSView>&)aView;
-- (void)  notifyViews;
+- (id)             init;
+- (void)   registerView:(NSObject<XDSView>&)aView;
+- (void) deregisterView:(NSObject<XDSView>&)aView;
+- (void)    notifyViews;
 
 @end
 
@@ -47,6 +48,11 @@
 - (void) registerView:(NSObject<XDSView>&)aView
 {
 	[self->views addObject:&aView];
+}
+
+- (void) deregisterView:(NSObject<XDSView>&)aView
+{
+	[self->views removeObject:&aView];
 }
 
 - (void) notifyViews
