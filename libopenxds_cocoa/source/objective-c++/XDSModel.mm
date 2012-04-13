@@ -26,6 +26,11 @@
 	[self->views addObject:&aView];
 }
 
+- (void) deregisterView:(NSObject<XDSView>&)aView
+{
+	[self->views removeObject:&aView];
+}
+
 - (void) notifyViews
 {
 	long max = [views count];
