@@ -19,6 +19,7 @@
 - (void) dealloc
 {
 	[self->views release];
+    [super dealloc];
 }
 
 - (void) registerView:(NSObject<XDSView>&)aView
