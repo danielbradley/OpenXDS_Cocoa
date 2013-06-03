@@ -6,13 +6,6 @@ clean:
 	rm -rf dep
 	rm -rf lib
 	rm -rf obj
-	rm -rf documentation
-	rm -rf include
-	rm -rf source/include
-	rm -rf source/objective-c++
-
-quasi:
-	quasi -f . source/mtx/*mtx*
 
 build:
 	CFLAGS="" LDFLAGS="-framework Cocoa -framework WebKit" build --force

@@ -1,10 +1,7 @@
-all: clean quasi build
+all: clean build
 
 clean:
 	cd libopenxds_cocoa; make clean
-
-quasi:
-	cd libopenxds_cocoa; make quasi
 
 build:
 	cd libopenxds_cocoa; make build
