@@ -247,7 +247,7 @@
 			id     subview           = [[self subviews]objectAtIndex:last];
 			NSSize preferred_subview = [subview preferredSize:suggested];
 
-			preferred.width  += preferred_subview.width;
+			preferred.width  += 0;
 			preferred.height  = fmax( preferred.height, preferred_subview.height );
 		}
 	}
@@ -274,7 +274,7 @@
 			NSSize preferred_subview = [subview preferredSize:suggested];
 
 			preferred.width   = fmax( preferred.width, preferred_subview.width );
-			preferred.height += preferred_subview.height;
+			preferred.height += 0;
 		}
 	}
 
