@@ -88,7 +88,7 @@
 	long last   = [subviews count] - 1;
 
 	NSRect frame     = [self frame];
-	NSRect bounds    = [self bounds];
+	//NSRect bounds    = [self bounds];
 	NSSize suggested = frame.size;
 	NSSize none      = NSMakeSize(0,0);
 	
